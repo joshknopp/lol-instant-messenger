@@ -1,0 +1,4 @@
+name: api
+handlers:
+- functions/*.ts
+preview-features: []

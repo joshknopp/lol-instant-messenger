@@ -1,0 +1,45 @@
+/* chat.component.css */
+
+.chat-container {
+    background-color: #f5f5f5; /* Light gray background */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .message {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif; /* Choose an appropriate font */
+  }
+  
+  .user {
+    background-color: #007BFF; /* Blue for user messages */
+    color: #fff; /* White text for user messages */
+    align-self: flex-end;
+  }
+  
+  .assistant {
+    background-color: #f0f0f0; /* Light gray for assistant messages */
+    color: #000; /* Black text for assistant messages */
+    align-self: flex-start;
+  }
+  
+  .message-input {
+    border: none;
+    border-bottom: 1px solid #007BFF; /* Blue underline for input */
+    padding: 5px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .send-button {
+    background-color: #007BFF; /* Blue button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+  }
+  
