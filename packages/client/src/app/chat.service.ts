@@ -8,6 +8,15 @@ import { environment } from '../environments/environment'; // Import the environ
 export class ChatService {
   constructor(private http: HttpClient) {}
 
+  async ping() {
+    try {
+      const response = await this.http.get<{ message: string }>(`${environment.apiUrl}/ping`).toPromise();
+      return response;
+    } catch (error) {
+      throw new Error('Failed to send message to the API');
+    }
+  }
+
   async sendMessageToApi(message: string, conversationId?: string) {
     try {
       const payload = {message, conversationId};

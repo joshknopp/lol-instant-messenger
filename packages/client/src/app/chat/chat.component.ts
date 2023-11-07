@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../chat.service';
 
 @Component({
@@ -6,11 +6,16 @@ import { ChatService } from '../chat.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit {
   userMessage = '';
   messages: any[] = [];
 
   constructor(private chatService: ChatService) {}
+
+  async ngOnInit(): Promise<void> {
+    const response = await this.chatService.ping();
+    console.log(`ping`, response);
+  }
 
   async sendMessage() {
     if (this.userMessage) {

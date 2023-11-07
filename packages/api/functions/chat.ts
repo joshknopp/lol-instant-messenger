@@ -79,6 +79,11 @@ async function sendRequestToOpenAI(conversation): Promise<string> {
   return chatCompletion.choices[0].message.content;
 }
 
+chatApi.get('/ping', async (ctx) => {
+  ctx.res.status = 200;
+  ctx.res.body = 'ack';
+});
+
 chatApi.post('/chat', async (ctx) => {
   const input: Record<string, any> = ctx.req.json();
   const userMessage: string = input.message;
