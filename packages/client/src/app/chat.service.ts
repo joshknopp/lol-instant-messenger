@@ -18,14 +18,12 @@ export class ChatService {
   }
 
   async sendMessageToApi(message: string, conversationId?: string) {
-    try {
       const payload = {message, conversationId};
+      const payloadString = JSON.stringify(payload);
       console.log(`url = ${environment.apiUrl}/chat`);
       console.log(`payload`, payload);
-      const response = await this.http.post<{ message: string }>(`${environment.apiUrl}/chat`, payload).toPromise();
+      console.log(`payloadString`, payloadString);
+      const response = await this.http.post<{ message: string }>(`${environment.apiUrl}/chat/`, payloadString).toPromise();
       return response;
-    } catch (error) {
-      throw new Error('Failed to send message to the API');
-    }
   }
 }

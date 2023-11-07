@@ -10,7 +10,7 @@ const cors = (ctx, next) => {
 
   // Local dev only (i.e. localhost)
   ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
-
+  
   ctx.res.headers['Access-Control-Allow-Methods'] = [
     'GET, POST, PATCH, DELETE, OPTIONS',
   ]

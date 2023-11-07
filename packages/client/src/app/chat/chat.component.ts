@@ -7,14 +7,14 @@ import { ChatService } from '../chat.service';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  userMessage = '';
+  userMessage = 'Tell me about yourself';
   messages: any[] = [];
 
   constructor(private chatService: ChatService) {}
 
   async ngOnInit(): Promise<void> {
-    const response = await this.chatService.ping();
-    console.log(`ping`, response);
+    //const response = await this.chatService.ping();
+    //console.log(`ping`, response);
   }
 
   async sendMessage() {
