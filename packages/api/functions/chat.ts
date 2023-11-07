@@ -2,7 +2,35 @@ import { api, secret } from '@nitric/sdk';
 import { OpenAI } from 'openai';
 import { v4 as uuidv4 } from 'uuid';
 
-const chatApi = api('main');
+const cors = (ctx, next) => {
+  const { headers } = ctx.req
+
+  // Allow all Origins
+  //ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
+
+  // Local dev only (i.e. localhost)
+  ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
+
+  ctx.res.headers['Access-Control-Allow-Methods'] = [
+    'GET, POST, PATCH, DELETE, OPTIONS',
+  ]
+
+  if (headers['Access-Control-Request-Headers']) {
+    ctx.res.headers['Access-Control-Allow-Headers'] = Array.isArray(
+      headers['Access-Control-Request-Headers']
+    )
+      ? headers['Access-Control-Request-Headers']
+      : [headers['Access-Control-Request-Headers']]
+  }
+
+  return next(ctx)
+}
+
+const chatApi = api('main', {
+  // add at API level
+  middleware: [cors],
+});
+
 const apiKeyWritable = secret('api-key').for('put');
 const apiKeyReadable = secret('api-key').for('access');
 
@@ -52,12 +80,6 @@ async function sendRequestToOpenAI(conversation): Promise<string> {
 }
 
 chatApi.post('/chat', async (ctx) => {
-  // Trying to overcome CORS for local testing
-  // TODO Beef this up for a real deployment
-  ctx.res.headers["Access-Control-Allow-Origin"] = ["*"];
-  ctx.res.headers['Access-Control-Allow-Methods'] = ["*"];
-  ctx.res.headers['Access-Control-Allow-Headers'] = ["*"];
-
   const input: Record<string, any> = ctx.req.json();
   const userMessage: string = input.message;
   let conversationId: string = input.conversationId;
@@ -71,7 +93,8 @@ chatApi.post('/chat', async (ctx) => {
   let conversationHistory = conversations.get(conversationId) || [];
   conversationHistory.push({ role: 'user', content: userMessage });
 
-  const openAIResponse = await sendRequestToOpenAI(conversationHistory);
+  const openAIResponse = 'TEST RESPONSE';
+  //const openAIResponse = await sendRequestToOpenAI(conversationHistory);
 
   conversationHistory.push({ role: 'assistant', content: openAIResponse });
   conversations.set(conversationId, conversationHistory);
