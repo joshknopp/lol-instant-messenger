@@ -1,10 +1,8 @@
 <div class="chat-container">
     <div class="chat-history">
-        <div class="message user" *ngFor="let message of messages">
-        You: {{ message.userMessage }}
-        </div>
-        <div class="message assistant" *ngFor="let message of messages">
-        Them: {{ message.assistantMessage }}
+        <div class="message" [ngClass]="message.author" *ngFor="let message of messages">
+            {{ message.author === 'user' ? 'You:' : 'Them:' }}
+            {{ message.body }}
         </div>
     </div>
     <input [(ngModel)]="userMessage" class="message-input" placeholder="Type your message..." (keydown.enter)="sendMessage()" />

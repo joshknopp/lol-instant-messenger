@@ -6,10 +6,10 @@ const cors = (ctx, next) => {
   const { headers } = ctx.req
 
   // Allow all Origins
-  //ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
+  ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
 
   // Local dev only (i.e. localhost)
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
+  //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
   
   ctx.res.headers['Access-Control-Allow-Methods'] = [
     'GET, POST, PATCH, DELETE, OPTIONS',
@@ -38,13 +38,28 @@ const conversations = new Map<string, any>();
 
 async function getRandomCharacterName(): Promise<string> {
   const characters: string[] = [
-    "Steve Urkel",
-    "Bart Simpson",
-    "Vanilla Ice",
-    "Chandler Bing",
-    "Cosmo Kramer",
-    "Uncle Joey Gladstone"
+    'Austin Powers',
+    'The Fresh Prince (Will Smith)',
+    'Steve Urkel (Family Matters)',
+    'Screech (Saved by the Bell)',
+    'Forrest Gump',
+    'Fox Mulder (The X-Files)',
+    'Tony Stark (Iron Man)',
+    'Cher Horowitz (Clueless)',
+    'Buffy Summers (Buffy the Vampire Slayer)',
+    'Joey Tribbiani (Friends)',
+    'Tommy Pickles (Rugrats)',
+    'Homer Simpson (The Simpsons)',
+    'Scary Spice (Mel B)',
+    'Uncle Joey Gladstone (Full House)',
+    'Carmen Sandiego',
+    'Clarissa Darling (Clarissa Explains It All)',
+    'Captain Jack Sparrow (Pirates of the Caribbean)',
+    'Miss Piggy (The Muppets)',
+    'Wayne and Garth (Wayne\'s World)',
+    'Dr. Evil (Austin Powers)'
   ];
+  
   return characters[Math.floor(Math.random() * characters.length)];
 }
 
@@ -53,7 +68,13 @@ async function getCharacterInstruction(characterName?: string): Promise<string> 
   if (!characterName) {
     characterName = await getRandomCharacterName();
   }
-  return `You are ${characterName}. Every response is in character, including occasional use of catch phrases.`;
+  return `You are ${characterName} and the user is chatting with you in an instant messaging application similar to AOL Instant Messenger. ` +
+    `Every response must be completely in character, including occasional use of catch phrases. ` +
+    `If you are from a specific era in time, only use language and reference events appropriate to your time period. ` +
+    `Keep responses brief in order to maintain a back-and-forth conversational cadence. ` +
+    `Use shorthand, punctuation, and captalization appropriate to a very informal messaging format, and consider mirroring grammar based on user input. ` +
+    `Also note this is AOL Instant Messenger from the 90s, so no emojis are available. ` +
+    `However, you may very occasionally use simple glyphs like :) for a smile or :( for a frown. `;
 }
 
 async function getApiKey(): Promise<string> {
@@ -95,11 +116,11 @@ chatApi.post('/chat', async (ctx) => {
     conversations.set(conversationId, [{ role: 'system', content: await getCharacterInstruction() }]);
   }
 
+  // TODO Think about how to handle service restarts, since convo only lives in memory - currently fails back to vamilla OpenAI which is no good
   let conversationHistory = conversations.get(conversationId) || [];
   conversationHistory.push({ role: 'user', content: userMessage });
 
-  const openAIResponse = 'TEST RESPONSE';
-  //const openAIResponse = await sendRequestToOpenAI(conversationHistory);
+  const openAIResponse = await sendRequestToOpenAI(conversationHistory);
 
   conversationHistory.push({ role: 'assistant', content: openAIResponse });
   conversations.set(conversationId, conversationHistory);
