@@ -40,7 +40,8 @@ export class ChatComponent {
           this.messages.push(this.buildAssistantMessage(response.message));
         }
       } catch (error) {
-        console.error('API error:', error);
+        console.error('API error occurred on sendMessage:', error);
+        this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`));
       }
     }
   }

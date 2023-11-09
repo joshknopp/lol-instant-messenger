@@ -6,7 +6,7 @@ const cors = (ctx, next) => {
   const { headers } = ctx.req
 
   // Allow all Origins
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
+  ctx.res.headers['Access-Control-Allow-Origin'] = ['*','http://localhost:4200']
 
   // Local dev only (i.e. localhost)
   //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
@@ -100,7 +100,7 @@ async function sendRequestToOpenAI(conversation): Promise<string> {
   return chatCompletion.choices[0].message.content;
 }
 
-chatApi.get('/ping', async (ctx) => {
+chatApi.get('/health', async (ctx) => {
   ctx.res.status = 200;
   ctx.res.body = 'ack';
 });
