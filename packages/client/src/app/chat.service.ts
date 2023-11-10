@@ -21,7 +21,7 @@ export class ChatService {
   async sendMessageToApi(message: string, conversationId?: string) {
       const payload = {message, conversationId};
       const payloadString = JSON.stringify(payload);
-      const response = await firstValueFrom(this.http.post<{ conversationId: string, message: string }>(`${environment.apiUrl}/chat`, payloadString));
+      const response = await firstValueFrom(this.http.post<{ conversationId: string, message: string, screenName: string }>(`${environment.apiUrl}/chat`, payloadString));
       return response;
   }
 }

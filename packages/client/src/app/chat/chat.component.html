@@ -1,8 +1,8 @@
 <div class="chat-container">
     <div class="chat-history">
         <div class="message" [ngClass]="message.author" *ngFor="let message of messages">
-            {{ message.author === 'user' ? 'You:' : 'Them:' }}
-            {{ message.body }}
+            <span class="username" [ngClass]="message.author">{{ getUserName(message) + ': ' }}</span>
+            <span class="body">{{ message.body }}</span>
         </div>
     </div>
     <input [(ngModel)]="userMessage" class="message-input" placeholder="Type your message..." (keydown.enter)="sendMessage()" />

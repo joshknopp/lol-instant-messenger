@@ -3,6 +3,7 @@ import { ChatService } from '../chat.service';
 
 interface ChatMessage {
   author: 'assistant' | 'user',
+  screenName?: string,
   body: string,
   timestamp: Date
 }
@@ -19,8 +20,8 @@ export class ChatComponent {
 
   constructor(private chatService: ChatService) {}
 
-  private buildAssistantMessage(message: string) {
-    return {author: 'assistant', body: message, timestamp: new Date()} as ChatMessage;
+  private buildAssistantMessage(message: string, screenName?: string) {
+    return { author: 'assistant', screenName, body: message, timestamp: new Date() } as ChatMessage;
   }
 
   private buildUserMessage(message: string) {
@@ -36,13 +37,22 @@ export class ChatComponent {
         this.userMessage = '';
         const response = await this.chatService.sendMessageToApi(userMessage, this.conversationId);
         if (response) {
+          console.log(response)
           this.conversationId = response.conversationId;
-          this.messages.push(this.buildAssistantMessage(response.message));
+          this.messages.push(this.buildAssistantMessage(response.message, response.screenName));
         }
       } catch (error) {
         console.error('API error occurred on sendMessage:', error);
-        this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`));
+        this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`, 'Buddy'));
       }
     }
+  }
+
+  getUserName(message: ChatMessage): string {
+    let result = message.screenName;
+    if(!result) {
+      result = message.author === 'user' ? 'You' : 'Them';
+    }
+    return result;
   }
 }

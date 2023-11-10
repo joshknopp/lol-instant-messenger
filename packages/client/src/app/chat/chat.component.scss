@@ -5,25 +5,39 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
+    max-width: 480px;
   }
   
   .message {
     margin: 5px;
     padding: 10px;
     border-radius: 10px;
-    font-family: Arial, sans-serif; /* Choose an appropriate font */
+    font-family: 'Times New Roman', Times, serif;
   }
-  
-  .user {
-    background-color: #007BFF; /* Blue for user messages */
-    color: #fff; /* White text for user messages */
+
+  .message.user {
+    background-color: #f0f0f0;
+    color: #000;
     align-self: flex-end;
   }
   
-  .assistant {
-    background-color: #f0f0f0; /* Light gray for assistant messages */
-    color: #000; /* Black text for assistant messages */
+  .message.assistant {
+    background-color: #f0f0f0;
+    color: #000;
     align-self: flex-start;
+  }
+  
+  .username {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+  }
+  
+  .username.user {
+    color: blue;
+  }
+  
+  .username.assistant {
+    color: red;
   }
   
   .message-input {
