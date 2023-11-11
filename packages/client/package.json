@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "share": "ng serve --host 0.0.0.0 --port 4200 --disable-host-check true",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
