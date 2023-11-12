@@ -6,8 +6,8 @@ const cors = (ctx, next) => {
   const { headers } = ctx.req
 
   // Allow all Origins
-  //ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
+  ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
+  //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
 
   ctx.res.headers['Access-Control-Allow-Methods'] = [
     'GET, POST, PATCH, DELETE, OPTIONS',
@@ -30,8 +30,6 @@ const chatApi = api('lol-im-service', {
 
 const apiKeyWritable = secret('api-key').for('put');
 const apiKeyReadable = secret('api-key').for('access');
-
-apiKeyWritable.put('MUST_SET_API_KEY');
 
 const conversations = new Map<string, Conversation>();
 
