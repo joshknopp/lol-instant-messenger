@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, NgZone, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { take } from 'rxjs';
+import { AudioService } from '../audio.service';
 
 interface ChatMessage {
   author: 'assistant' | 'user',
@@ -14,7 +15,7 @@ interface ChatMessage {
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements AfterViewInit {
+export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chatHistory') chatHistory!: ElementRef;
   @ViewChild('messageInput') messageInput!: ElementRef;
 
@@ -22,7 +23,20 @@ export class ChatComponent implements AfterViewInit {
   messages: ChatMessage[] = [];
   conversationId?: string;
 
-  constructor(private chatService: ChatService, private renderer: Renderer2, private zone: NgZone) {}
+  constructor(
+    private chatService: ChatService,
+    private renderer: Renderer2,
+    private zone: NgZone,
+    private audioService: AudioService
+  ) {}
+
+  ngOnInit(): void {
+    this.audioService.doorOpen();
+  }
+
+  ngOnDestroy(): void {
+    this.audioService.doorSlam();
+  }
 
   ngAfterViewInit() {
     // Set focus on the element with class "message-input"
@@ -42,6 +56,7 @@ export class ChatComponent implements AfterViewInit {
   async sendMessage() {
     if (this.userMessage) {
       this.messages.push(this.buildUserMessage(this.userMessage));
+      this.audioService.send();
       this.scrollToBottom();
 
       try {
@@ -56,6 +71,7 @@ export class ChatComponent implements AfterViewInit {
         console.error('API error occurred on sendMessage:', error);
         this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`, 'Buddy'));
       } finally {
+        this.audioService.receive();
         // Wait for the view to update and then scroll to the bottom
         this.zone.onStable.pipe(take(1)).subscribe(() => {
           this.scrollToBottom();

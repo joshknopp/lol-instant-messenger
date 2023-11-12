@@ -1,4 +1,4 @@
-# Client
+# LOL Instant Messenger Client
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.2.
 
@@ -25,3 +25,11 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## Acknowledgements
+
+Theme based on [Angular Windows 95](https://github.com/Nytyr/angular-windows-95/tree/master).
+
+Inspiration drawm from [Slink](https://github.com/broothie/slink.chat/tree/main) and [AIM Rewind](https://aimrewind.com/).
+
+Audio was found here: http://gauss.ececs.uc.edu/Courses/c653/lectures/AIM/sound/
