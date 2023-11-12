@@ -1,0 +1,79 @@
+/* app.component.css */
+
+.main-section {
+    min-height: calc(100vh - 38px) !important;
+    min-height: -o-calc(100vh - 38px) !important;
+    min-height: -webkit-calc(100vh - 38px) !important;
+    min-height: -moz-calc(100vh - 38px) !important;
+
+    height: calc(100vh - 38px);
+}
+
+.start-menu {
+    position: absolute;
+    bottom: 38px;
+}
+
+.fmxw-300 {
+    max-width: 300px !important;
+}
+
+.navbar .navbar-nav .nav-link.pressed:before {
+    border-right: 2px solid #FCFCFC;
+    border-bottom: 2px solid #FCFCFC;
+    border-top: 2px solid #08080E;
+    border-left: 2px solid #08080E;
+}
+
+.start-menu-body {
+    padding: 0;
+}
+
+.nav-item.start-menu-item {
+    color: black;
+    padding-left: 5px;
+    font-size: 12px;
+    width: 100%;
+}
+.nav-item.start-menu-item:hover {
+    background-color: #000082;
+}
+
+.nav-item.start-menu-item .nav-link {
+    color: black;
+}
+.nav-item.start-menu-item .nav-link:hover {
+    color: white;
+}
+
+.window-element {
+    position: absolute;
+    top: 80px;
+}
+
+.btn-close {
+    position: absolute;
+    right: 0;
+    margin-right: 3px;
+    height: 20px;
+    width: 20px;
+    padding: 0;
+    top: 2px;
+    font-weight: bold;
+}
+
+.navbar .navbar-nav .nav-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cursor-draggable-bar {
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+.cursor-draggable-bar:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}

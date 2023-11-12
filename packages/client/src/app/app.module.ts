@@ -5,11 +5,18 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat.component';
+import { DraggableDirective } from './draggable.directive';
+import { WindowsService } from './windows.service';
 
 @NgModule({
-  declarations: [AppComponent, ChatComponent],
+  declarations: [
+    AppComponent, 
+    DraggableDirective,
+    ChatComponent],
   imports: [BrowserModule, FormsModule, HttpClientModule],
-  providers: [],
+  providers: [
+    WindowsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
