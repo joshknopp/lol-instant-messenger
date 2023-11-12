@@ -6,7 +6,7 @@ const cors = (ctx, next) => {
   const { headers } = ctx.req
 
   // Allow all Origins
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['*']
+  ctx.res.headers['Access-Control-Allow-Origin'] = ['https://joshknopp.com', 'https://www.joshknopp.com']
   //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
 
   ctx.res.headers['Access-Control-Allow-Methods'] = [
