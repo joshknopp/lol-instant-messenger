@@ -5,7 +5,7 @@
       <div class="row justify-content-center">
         <div class="window-element col-12 d-flex align-items-center justify-content-center" [ngStyle]="{'margin-top': (i * 10)+'px'}" *ngFor="let window of openedWindows; let i = index">
           <div class="card card-tertiary w-100 fmxw-400" [appDraggable]="true" [ngStyle]="{'z-index': window.zIndex}" (click)="focusWindow(i)">
-            <div class="card-header text-center cursor-draggable-bar">
+            <div class="card-header cursor-draggable-bar">
               <span>{{window.title}}</span>
 
               <button class="btn btn-sm btn-primary btn-close" type="button" (click)="closeWindow(i)">
@@ -22,7 +22,7 @@
   </section>
 </main>
 <div *ngIf="startMenuOpened" class="start-menu card card-tertiary w-100 fmxw-300" [ngStyle]="{'z-index': this.lastZIndex + 1}">
-  <div class="card-header text-center">
+  <div class="card-header">
     <span>Start Menu</span>
   </div>
   <div class="card-body start-menu-body">
@@ -36,8 +36,8 @@
   </div>
 </div>
 <footer>
-  <nav id="navbar-footer" class="navbar navbar-main navbar-expand-lg navbar-dark justify-content-between navbar-footer">
-    <ul class="navbar-nav navbar-nav-hover flex-row align-items-center">
+  <nav id="navbar-footer" class="navbar footer navbar-main navbar-expand-lg navbar-dark justify-content-between navbar-footer">
+    <ul class="navbar-nav navbar-nav-hover flex-row align-items-center list-style-none">
       <li class="nav-item">
         <div class="nav-link" role="button" [ngClass]="{'pressed': startMenuOpened}" (click)="startMenuOpened = !startMenuOpened">
           <span class="nav-link-inner-text">📺 Start</span>

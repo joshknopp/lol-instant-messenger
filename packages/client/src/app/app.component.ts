@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, QueryList, ViewChildren, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, QueryList, ViewChildren, ViewContainerRef } from '@angular/core';
+import { ChatComponent } from './chat/chat.component';
 import { MenuItem } from './menu.item';
 import { WindowsService } from './windows.service';
-import { ChatComponent } from './chat/chat.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,7 @@ import { ChatComponent } from './chat/chat.component';
 export class AppComponent implements AfterViewInit {
   menu: MenuItem[] = [
     {
-      name: '💬 LOL IM',
+      name: '💬 LOL Instant Messenger',
       goTo: ChatComponent,
     },
     {
@@ -28,7 +28,7 @@ export class AppComponent implements AfterViewInit {
     {
       component: ChatComponent,
       zIndex: this.lastZIndex,
-      title: '💬 LOL IM'
+      title: '💬 LOL Instant Messenger'
     }
   ];
 
@@ -36,7 +36,6 @@ export class AppComponent implements AfterViewInit {
   public windowTargets!: QueryList<ViewContainerRef>;
 
   constructor(
-    private readonly componentFactoryResolver: ComponentFactoryResolver,
     private readonly windowsService: WindowsService,
   ) {}
 
@@ -86,8 +85,20 @@ export class AppComponent implements AfterViewInit {
 
   private loadWindowContent(index: number, component: any): void {
     const target = this.windowTargets.toArray()[index];
-    const widgetComponent = this.componentFactoryResolver.resolveComponentFactory(component);
-    const ref = target.createComponent(widgetComponent);
+    const ref = target.createComponent(component);
     ref.changeDetectorRef.detectChanges();
+
+    // 3. Find the parent or ancestor container with class "window-element"
+    let containerElement = ref.location.nativeElement.parentElement;
+    while (containerElement && !containerElement.classList.contains('window-element')) {
+      containerElement = containerElement.parentElement;
+    }
+
+    // 4. If found, adjust its position
+    if (containerElement) {
+      containerElement.style.position = 'absolute';
+      containerElement.style.left = '100px';
+      containerElement.style.top = '100px';
+    }
   }
 }

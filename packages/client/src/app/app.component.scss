@@ -29,6 +29,16 @@
     padding: 0;
 }
 
+.start-menu-body ul {
+    list-style-type:none;
+    padding-inline-start: 0px;
+}
+
+.start-menu-body ul .nav-link {
+    margin-left: 1em;
+    margin-right: 1em;
+} 
+
 .nav-item.start-menu-item {
     color: black;
     padding-left: 5px;
@@ -71,9 +81,14 @@
     cursor: grab;
     cursor: -moz-grab;
     cursor: -webkit-grab;
+    user-select: none;
 }
 .cursor-draggable-bar:active {
     cursor: grabbing;
     cursor: -moz-grabbing;
     cursor: -webkit-grabbing;
+}
+
+.time {
+    margin-left: auto;
 }
