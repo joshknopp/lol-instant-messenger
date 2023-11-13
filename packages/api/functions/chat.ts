@@ -1,35 +1,14 @@
-import { api, secret } from '@nitric/sdk';
-import { OpenAI } from 'openai';
+import { api } from '@nitric/sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { CorsService } from '../services/cors.service';
+import { OpenAiService } from '../services/openai.service';
 
-const cors = (ctx, next) => {
-  const { headers } = ctx.req
-
-  // Allow all Origins
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['https://joshknopp.com', 'https://www.joshknopp.com']
-  //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
-
-  ctx.res.headers['Access-Control-Allow-Methods'] = [
-    'GET, POST, PATCH, DELETE, OPTIONS',
-  ]
-
-  if (headers['Access-Control-Request-Headers']) {
-    ctx.res.headers['Access-Control-Allow-Headers'] = Array.isArray(
-      headers['Access-Control-Request-Headers']
-    )
-      ? headers['Access-Control-Request-Headers']
-      : [headers['Access-Control-Request-Headers']]
-  }
-  
-  return next(ctx)
-}
-
-const chatApi = api('lol-im-service', {
+const cors = CorsService.getCorsConfig();
+const chatApi = api('lol-im-chat', {
   middleware: [cors],
 });
 
-const apiKeyWritable = secret('api-key').for('put');
-const apiKeyReadable = secret('api-key').for('access');
+const openAiService: OpenAiService = new OpenAiService();
 
 const conversations = new Map<string, Conversation>();
 
@@ -189,27 +168,8 @@ async function getCharacterInstruction(character: Character): Promise<string> {
     `However, you may very occasionally use simple glyphs like :) for a smile or :( for a frown. `;
 }
 
-async function getApiKey(): Promise<string> {
-  const latest = await apiKeyReadable.latest().access();
-  return latest.asString();
-}
-
-async function getClient(): Promise<OpenAI> {
-  const apiKey = await getApiKey();
-  return new OpenAI({ apiKey });
-}
-
 function generateConversationId(): string {
   return uuidv4();
-}
-
-async function sendRequestToOpenAI(conversation): Promise<string> {
-  const openai: OpenAI = await getClient();
-  const chatCompletion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: conversation,
-  });
-  return chatCompletion.choices[0].message.content;
 }
 
 chatApi.get('/health', async (ctx) => {
@@ -237,7 +197,7 @@ chatApi.post('/chat', async (ctx) => {
   let buddyResponse: string;
 
   try {
-    const openAIResponse: string = await sendRequestToOpenAI(conversationHistory);
+    const openAIResponse: string = await openAiService.sendRequestToOpenAI(conversationHistory);
     conversationHistory.push({ role: 'assistant', content: openAIResponse });
     conversations.get(conversationId).messages = conversationHistory;
     buddyResponse = openAIResponse;
@@ -248,22 +208,4 @@ chatApi.post('/chat', async (ctx) => {
   // TODO if an error causes away message to return, probably should not be status 200
   ctx.res.status = 200;
   ctx.res.json({ conversationId, message: buddyResponse, screenName: conversation.character.screenName });
-});
-
-chatApi.put('/apikey', async (ctx) => {
-  try {
-    const queryValue: string[] = ctx.req.query.value;
-    const value: string = Array.isArray(queryValue) ? queryValue[0] : queryValue;
-    const latestVersion = await apiKeyWritable.put(value);
-
-    ctx.res.status = 200;
-    ctx.res.headers['Content-Type'] = ['application/json'];
-    ctx.res.body = JSON.stringify({ version: latestVersion.version });
-
-  } catch (error) {
-    ctx.res.status = 500;
-    ctx.res.headers['Content-Type'] = ['text/plain'];
-    ctx.res.body = 'Server error';
-  }
-  return ctx;
 });
