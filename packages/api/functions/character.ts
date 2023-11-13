@@ -1,10 +1,7 @@
 import { api } from '@nitric/sdk';
-import { v4 as uuidv4 } from 'uuid';
-import { CorsService } from '../services/cors.service';
-import { OpenAiService } from '../services/openai.service';
 import { CharacterService } from '../services/character.service';
+import { CorsService } from '../services/cors.service';
 
-const openAiService: OpenAiService = new OpenAiService();
 const characterService: CharacterService = new CharacterService();
 
 const cors = CorsService.getCorsConfig();
