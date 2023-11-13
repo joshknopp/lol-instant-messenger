@@ -4,6 +4,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="window-element col-12 d-flex align-items-center justify-content-center" [ngStyle]="{'margin-top': (i * 10)+'px'}" *ngFor="let window of openedWindows; let i = index">
+          <!-- TODO Only the title should be draggable, otherwise mobile experience is wonky -->
           <div class="card card-tertiary w-100 fmxw-400" [appDraggable]="true" [ngStyle]="{'z-index': window.zIndex}" (click)="focusWindow(i)">
             <div class="card-header cursor-draggable-bar">
               <span>{{window.title}}</span>

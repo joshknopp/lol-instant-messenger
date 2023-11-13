@@ -88,17 +88,16 @@ export class AppComponent implements AfterViewInit {
     const ref = target.createComponent(component);
     ref.changeDetectorRef.detectChanges();
 
-    // 3. Find the parent or ancestor container with class "window-element"
     let containerElement = ref.location.nativeElement.parentElement;
     while (containerElement && !containerElement.classList.contains('window-element')) {
       containerElement = containerElement.parentElement;
     }
 
-    // 4. If found, adjust its position
+    // TODO Consider a media query or simple window width check to handle different devices
     if (containerElement) {
       containerElement.style.position = 'absolute';
-      containerElement.style.left = '100px';
-      containerElement.style.top = '100px';
+      containerElement.style.left = '10px';
+      containerElement.style.top = '10px';
     }
   }
 }
