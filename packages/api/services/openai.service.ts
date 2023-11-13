@@ -14,10 +14,12 @@ export class OpenAiService {
     return new OpenAI({ apiKey });
   }
   
+  // TODO error handling no good, test by setting invalid API key
   async sendRequestToOpenAI(conversation): Promise<string> {
     const openai: OpenAI = await this.getClient();
     const chatCompletion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
+      temperature: 1.5,
       messages: conversation,
     });
     return chatCompletion.choices[0].message.content;
