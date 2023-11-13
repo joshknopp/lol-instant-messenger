@@ -4,6 +4,9 @@ export class CorsService {
             const { headers } = ctx.req;
             
             // Allow known origins
+            /*ctx.res.headers['Access-Control-Allow-Origin'] = [
+              'http://localhost:4200'
+            ];*/
             ctx.res.headers['Access-Control-Allow-Origin'] = [
                 'https://joshknopp.com',
                 'https://www.joshknopp.com'

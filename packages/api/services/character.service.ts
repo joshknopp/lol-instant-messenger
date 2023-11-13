@@ -18,21 +18,22 @@ function getSystemQuery() {
 // TODO Ask OpenAI to craft a prompt to serve as the "system" prompt for the actual chat for this character
 async function getCharacterData(searchQuery: string): Promise<string> {
     if (!searchQuery) {
-      searchQuery = 'random personality from the early 90s';
+      searchQuery = 'a totally random TV, movie, music, or pop culture personality from early 90s';
     }
     return `Give me one celebrity or fictional character that matches this search query:
       "${searchQuery}". Provide a string knownFor which states the TV show or other media they are famous for. 
       The screenName property is a clever or funny screen name between 3 and 16 characters that matches the 
       person's identity. The awayMessage should be a clever pun or joke, or a song lyric. Don't be boring!
       Response format should be a Json object containing keys: { name, knownFor, screenName, awayMessage } 
-      Values are all strings. Respond with Json array only, no other text or commentary.`;
+      Values are all strings and all are required. Double check that all keys are defined.
+      Respond with Json object only, no other text or commentary.`;
 }
   
 export class CharacterService {
-    async getCharacter(searchQuery: string): Promise<Object> {
+    async getCharacter(searchQuery: string = null): Promise<Character> {
         const openAIResponse: string = await openAiService.sendRequestToOpenAI([
             { role: 'system', content: getSystemQuery() },
-            { role: 'user', content: getCharacterData(searchQuery) }
+            { role: 'user', content: await getCharacterData(searchQuery) }
         ]);
         const result = JSON.parse(openAIResponse);
         return result;
