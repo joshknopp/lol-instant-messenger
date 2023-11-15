@@ -1,35 +1,16 @@
 import { api, secret } from '@nitric/sdk';
-import { OpenAI } from 'openai';
 import { v4 as uuidv4 } from 'uuid';
+import { CorsService } from '../services/cors.service';
+import { OpenAiService } from '../services/openai.service';
+import { Character, CharacterService } from '../services/character.service';
 
-const cors = (ctx, next) => {
-  const { headers } = ctx.req
-
-  // Allow all Origins
-  ctx.res.headers['Access-Control-Allow-Origin'] = ['https://joshknopp.com', 'https://www.joshknopp.com']
-  //ctx.res.headers['Access-Control-Allow-Origin'] = ['http://localhost:4200']
-
-  ctx.res.headers['Access-Control-Allow-Methods'] = [
-    'GET, POST, PATCH, DELETE, OPTIONS',
-  ]
-
-  if (headers['Access-Control-Request-Headers']) {
-    ctx.res.headers['Access-Control-Allow-Headers'] = Array.isArray(
-      headers['Access-Control-Request-Headers']
-    )
-      ? headers['Access-Control-Request-Headers']
-      : [headers['Access-Control-Request-Headers']]
-  }
-  
-  return next(ctx)
-}
-
-const chatApi = api('lol-im-service', {
+const cors = CorsService.getCorsConfig();
+const chatApi = api('lol-im-chat', {
   middleware: [cors],
 });
 
-const apiKeyWritable = secret('api-key').for('put');
-const apiKeyReadable = secret('api-key').for('access');
+const openAiService: OpenAiService = new OpenAiService();
+const characterService: CharacterService = new CharacterService();
 
 const conversations = new Map<string, Conversation>();
 
@@ -41,146 +22,8 @@ interface Conversation {
   }[]
 }
 
-interface Character {
-  name: string,
-  knownFor: string,
-  screenName: string,
-  awayMessage: string
-}
-
-async function getRandomCharacter(): Promise<Character> {
-  const characters: Character[] = [
-    {
-      name: 'Michael Jackson',
-      knownFor: 'King of Pop',
-      screenName: 'Moonwalker88',
-      awayMessage: "Just moonwalking through life!"
-    },
-    {
-      name: 'Indiana Jones',
-      knownFor: 'Indiana Jones films',
-      screenName: 'WhipMaster1899',
-      awayMessage: "Exploring ancient artifacts today."
-    },
-    {
-      name: 'Eddie Murphy',
-      knownFor: 'Axel Foley in "Beverly Hills Cop"',
-      screenName: 'LaughMaster',
-      awayMessage: "Having a good laugh elsewhere."
-    },
-    {
-      name: 'Marty McFly',
-      knownFor: 'Back to the Future',
-      screenName: 'MartyMcFly68',
-      awayMessage: "Time-traveling, be back soon!"
-    },
-    {
-      name: 'Elvis Presley',
-      knownFor: 'The King of Rock and Roll',
-      screenName: 'RockNRollKing',
-      awayMessage: "Rocking in the afterlife."
-    },
-    {
-      name: 'Rambo',
-      knownFor: 'John Rambo',
-      screenName: 'ActionHero77',
-      awayMessage: "Defending freedom, out of town."
-    },
-    {
-      name: 'Ellen Ripley',
-      knownFor: 'Alien series',
-      screenName: 'XenomorphHunter',
-      awayMessage: "Battling Xenomorphs, don't disturb."
-    },
-    {
-      name: 'The Terminator',
-      knownFor: 'Arnold Schwarzenegger',
-      screenName: 'AssassinT800',
-      awayMessage: "I'll be back, offline for now."
-    },
-    {
-      name: 'Madonna',
-      knownFor: 'Queen of Pop',
-      screenName: 'MaterialGirl',
-      awayMessage: "Striking a pose somewhere."
-    },
-    {
-      name: 'Morpheus',
-      knownFor: 'The Matrix',
-      screenName: 'RedPillLeader',
-      awayMessage: "Taking the red pill, in the Matrix."
-    },
-    {
-      name: 'Kevin McCallister',
-      knownFor: 'Home Alone',
-      screenName: 'KidHero92',
-      awayMessage: "Defending my home, parents away."
-    },
-    {
-      name: 'Mr. T',
-      knownFor: 'B.A. Baracus in "The A-Team"',
-      screenName: 'PityTheFool',
-      awayMessage: "Pitying the fools elsewhere."
-    },
-    {
-      name: 'James Bond',
-      knownFor: '007 spy series',
-      screenName: 'SecretAgent007',
-      awayMessage: "On a secret mission, back soon."
-    },
-    {
-      name: 'Egon Spengler',
-      knownFor: 'Ghostbusters',
-      screenName: 'Ghostbuster88',
-      awayMessage: "Busting ghosts, will return later."
-    },
-    {
-      name: 'Bill S. Preston Esquire',
-      knownFor: 'Bill & Ted films',
-      screenName: 'TimeTravelBill',
-      awayMessage: "Time-traveling adventures!"
-    },
-    {
-      name: 'Cindy Crawford',
-      knownFor: 'Supermodel',
-      screenName: 'RunwayQueen',
-      awayMessage: "Strutting down the runway."
-    },
-    {
-      name: 'The Fresh Prince',
-      knownFor: 'Will Smith',
-      screenName: 'BelAirPrince',
-      awayMessage: "Chillin' out, maxin', relaxin' all cool."
-    },
-    {
-      name: 'Ace Ventura',
-      knownFor: 'Ace Ventura: Pet Detective movie',
-      screenName: 'PetDetective',
-      awayMessage: "Looking for lost pets, be back soon."
-    },
-    {
-      name: 'Scrooge McDuck',
-      knownFor: 'DuckTales',
-      screenName: 'RichDuck47',
-      awayMessage: "Swimming in my money vault."
-    },
-    {
-      name: 'Lara Croft',
-      knownFor: 'Tomb Raider',
-      screenName: 'TombExplorer',
-      awayMessage: "Exploring ancient tombs, offline."
-    }
-  ];
-  
-  return characters[Math.floor(Math.random() * characters.length)];
-}
-
 async function getCharacterInstruction(character: Character): Promise<string> {
-  // TODO This will eventually be generated by OpenAI, and possibly cached in a data store for repeats
-  if (!character) {
-    character = await getRandomCharacter();
-  }
-  return `You are ${character.name}, known for ${character.knownFor}, and the user is chatting with you in an IM application similar to AOL Instant Messenger. ` +
+  return JSON.stringify(character) + `You are ${character.name}, known for ${character.knownFor}, and the user is chatting with you in an IM application similar to AOL Instant Messenger. ` +
     `Every response must be completely in character, including occasional use of catch phrases. ` +
     `If you are from a specific era in time, only use language and reference events appropriate to your time period. ` +
     `Keep responses brief in order to maintain a back-and-forth conversational cadence. ` +
@@ -189,27 +32,8 @@ async function getCharacterInstruction(character: Character): Promise<string> {
     `However, you may very occasionally use simple glyphs like :) for a smile or :( for a frown. `;
 }
 
-async function getApiKey(): Promise<string> {
-  const latest = await apiKeyReadable.latest().access();
-  return latest.asString();
-}
-
-async function getClient(): Promise<OpenAI> {
-  const apiKey = await getApiKey();
-  return new OpenAI({ apiKey });
-}
-
 function generateConversationId(): string {
   return uuidv4();
-}
-
-async function sendRequestToOpenAI(conversation): Promise<string> {
-  const openai: OpenAI = await getClient();
-  const chatCompletion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: conversation,
-  });
-  return chatCompletion.choices[0].message.content;
 }
 
 chatApi.get('/health', async (ctx) => {
@@ -224,9 +48,10 @@ chatApi.post('/chat', async (ctx) => {
 
   if (!conversationId) {
     conversationId = generateConversationId();
-    let character: Character = await getRandomCharacter();
+    let character: Character = await characterService.getCharacter();
+    let characterInstruction = await getCharacterInstruction(character);
     // Initialize the conversation history with a system message
-    conversations.set(conversationId, { character, messages: [{ role: 'system', content: await getCharacterInstruction(character) }] });
+    conversations.set(conversationId, { character, messages: [{ role: 'system', content: characterInstruction }] });
   }
 
   // TODO Think about how to handle service restarts, since convo only lives in memory - currently fails back to vanilla OpenAI which is no good
@@ -237,7 +62,7 @@ chatApi.post('/chat', async (ctx) => {
   let buddyResponse: string;
 
   try {
-    const openAIResponse: string = await sendRequestToOpenAI(conversationHistory);
+    const openAIResponse: string = await openAiService.sendRequestToOpenAI(conversationHistory);
     conversationHistory.push({ role: 'assistant', content: openAIResponse });
     conversations.get(conversationId).messages = conversationHistory;
     buddyResponse = openAIResponse;
@@ -249,6 +74,22 @@ chatApi.post('/chat', async (ctx) => {
   ctx.res.status = 200;
   ctx.res.json({ conversationId, message: buddyResponse, screenName: conversation.character.screenName });
 });
+
+chatApi.post('/character', async (ctx) => {
+  const input: Record<string, any> = ctx.req.json();
+  const searchQuery: string = input.searchQuery;
+  
+  try {
+    const result = await characterService.getCharacter(searchQuery);
+    ctx.res.status = 200;
+    ctx.res.json(result);
+  } catch(err: any) {
+    ctx.res.status = 503;
+    ctx.res.json(characterService.getRandomStaticCharacter());
+  }
+});
+
+const apiKeyWritable = secret('api-key').for('put');
 
 chatApi.put('/apikey', async (ctx) => {
   try {
