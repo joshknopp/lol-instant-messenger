@@ -1,0 +1,40 @@
+<div class="buddy-list-window">
+    <div class="logo">
+        <img class="logo-image" src="assets/images/logo.png" alt="LOL Instant Messenger Logo" />
+    </div>
+    <div class="container tabs">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="p-1 bg-primary">
+                    <!-- TODO Why don't standard bootstrap tabs work? -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="isTabSelected('online')" id="online-tab" data-bs-toggle="tab" href="#online" role="tab" aria-controls="online" aria-selected="true"
+                                (click)="handleOnlineTabClick()">Online</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="isTabSelected('search')" id="search-tab" data-bs-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false"
+                                (click)="handleSearchTabClick()">Search</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane" [class.active]="isTabSelected('online')" [class.show]="isTabSelected('online')" id="online" role="tabpanel" aria-labelledby="online-tab">
+                            <div class="buddy-list container">
+                                <div class="buddy" *ngFor="let buddy of buddies">
+                                    <a class="username" (click)="startChat(buddy)">{{ buddy.screenName }}</a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-block btn-primary text-center" (click)="getRandomBuddies()">Refresh ↻</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane" [class.active]="isTabSelected('search')" [class.show]="isTabSelected('search')" id="search" role="tabpanel" aria-labelledby="search-tab">
+                            Coming Soon!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

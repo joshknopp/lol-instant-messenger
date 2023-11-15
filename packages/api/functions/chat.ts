@@ -1,8 +1,9 @@
 import { api, secret } from '@nitric/sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { Character } from '../../shared/model/character';
+import { CharacterService } from '../services/character.service';
 import { CorsService } from '../services/cors.service';
 import { OpenAiService } from '../services/openai.service';
-import { Character, CharacterService } from '../services/character.service';
 
 const cors = CorsService.getCorsConfig();
 const chatApi = api('lol-im-chat', {
@@ -45,10 +46,11 @@ chatApi.post('/chat', async (ctx) => {
   const input: Record<string, any> = ctx.req.json();
   const userMessage: string = input.message;
   let conversationId: string = input.conversationId;
+  let buddy: Character = input.buddy;
 
   if (!conversationId) {
     conversationId = generateConversationId();
-    let character: Character = await characterService.getCharacter();
+    let character: Character = buddy || await characterService.getCharacter();
     let characterInstruction = await getCharacterInstruction(character);
     // Initialize the conversation history with a system message
     conversations.set(conversationId, { character, messages: [{ role: 'system', content: characterInstruction }] });
@@ -86,6 +88,19 @@ chatApi.post('/character', async (ctx) => {
   } catch(err: any) {
     ctx.res.status = 503;
     ctx.res.json(characterService.getRandomStaticCharacter());
+  }
+});
+
+chatApi.get('/character/random/:count', async (ctx) => {
+  const count = parseInt(ctx.req.params['count']);
+  
+  try {
+    const result: Character[] = await characterService.getRandomExampleCharacters(count);
+    ctx.res.status = 200;
+    ctx.res.json(result);
+  } catch(err: any) {
+    ctx.res.status = 503;
+    ctx.res.json(null);
   }
 });
 

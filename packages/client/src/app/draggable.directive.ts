@@ -9,7 +9,7 @@ export class DraggableDirective implements OnInit {
     topStart = 0;
     leftStart = 0;
     appAllowDrag = true;
-    md: boolean = false;
+    isMouseDown: boolean = false;
 
     constructor(public element: ElementRef) {}
 
@@ -26,19 +26,23 @@ export class DraggableDirective implements OnInit {
         if (event.button === 2) {
             return; // prevents right click drag, remove his if you don't want it
         }
-        this.md = true;
-        this.topStart = event.clientY - this.element.nativeElement.style.top.replace('px', '');
-        this.leftStart = event.clientX - this.element.nativeElement.style.left.replace('px', '');
+
+        const clickedElement = event.target as HTMLElement;
+        if (clickedElement.classList.contains('cursor-draggable-bar')) {
+            this.isMouseDown = true;
+            this.topStart = event.clientY - this.element.nativeElement.style.top.replace('px', '');
+            this.leftStart = event.clientX - this.element.nativeElement.style.left.replace('px', '');
+        } 
     }
 
     @HostListener('document:mouseup')
     onMouseUp(event: MouseEvent): void {
-        this.md = false;
+        this.isMouseDown = false;
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        if (this.md && this.appAllowDrag){
+        if (this.isMouseDown && this.appAllowDrag){
             this.element.nativeElement.style.top = (event.clientY - this.topStart) + 'px';
             this.element.nativeElement.style.left = (event.clientX - this.leftStart) + 'px';
         }
@@ -46,7 +50,7 @@ export class DraggableDirective implements OnInit {
 
     @HostListener('touchstart', ['$event'])
     onTouchStart(event: TouchEvent): void {
-        this.md = true;
+        this.isMouseDown = true;
         this.topStart = event.changedTouches[0].clientY - this.element.nativeElement.style.top.replace('px', '');
         this.leftStart = event.changedTouches[0].clientX - this.element.nativeElement.style.left.replace('px', '');
         event.stopPropagation();
@@ -54,12 +58,12 @@ export class DraggableDirective implements OnInit {
 
     @HostListener('document:touchend')
     onTouchEnd(): void {
-        this.md = false;
+        this.isMouseDown = false;
     }
 
     @HostListener('document:touchmove', ['$event'])
     onTouchMove(event: TouchEvent): void {
-        if (this.md && this.appAllowDrag){
+        if (this.isMouseDown && this.appAllowDrag){
             this.element.nativeElement.style.top = ( event.changedTouches[0].clientY - this.topStart ) + 'px';
             this.element.nativeElement.style.left = ( event.changedTouches[0].clientX - this.leftStart ) + 'px';
         }

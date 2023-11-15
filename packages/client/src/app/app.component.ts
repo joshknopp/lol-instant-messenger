@@ -2,6 +2,8 @@ import { AfterViewInit, Component, QueryList, ViewChildren, ViewContainerRef } f
 import { ChatComponent } from './chat/chat.component';
 import { MenuItem } from './menu.item';
 import { WindowsService } from './windows.service';
+import { BuddyListComponent } from './buddy-list/buddy-list.component';
+import { Character } from '../../../shared/model/character';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,11 @@ import { WindowsService } from './windows.service';
 export class AppComponent implements AfterViewInit {
   menu: MenuItem[] = [
     {
-      name: '💬 LOL Instant Messenger',
+      name: '😆 LOL Instant Messenger',
+      goTo: BuddyListComponent,
+    },
+    {
+      name: '💬 LOL IM Chat',
       goTo: ChatComponent,
     },
     {
@@ -26,9 +32,9 @@ export class AppComponent implements AfterViewInit {
   lastWindowOpened = 0;
   openedWindows = [
     {
-      component: ChatComponent,
+      component: BuddyListComponent,
       zIndex: this.lastZIndex,
-      title: '💬 LOL Instant Messenger'
+      title: '😆 LOL Instant Messenger'
     }
   ];
 
@@ -36,7 +42,7 @@ export class AppComponent implements AfterViewInit {
   public windowTargets!: QueryList<ViewContainerRef>;
 
   constructor(
-    private readonly windowsService: WindowsService,
+    private readonly windowsService: WindowsService
   ) {}
 
   ngAfterViewInit(): void {
@@ -45,6 +51,14 @@ export class AppComponent implements AfterViewInit {
       .subscribe((data: MenuItem) => {
         this.openMenuItem(data);
       });
+    this.windowsService.startedChatEvent
+      .subscribe((buddy: Character) => {
+        this.openMenuItem( {
+          name: '💬 LOL IM Chat',
+          goTo: ChatComponent,
+          payload: buddy
+        });
+      });
   }
 
   openMenuItem(item: MenuItem): void {
@@ -52,11 +66,11 @@ export class AppComponent implements AfterViewInit {
       window.open(item.goTo, '_blank');
       return;
     }
-    this.openComponent(item.goTo, item.name);
+    this.openComponent(item.goTo, item.name, item.payload);
     this.startMenuOpened = false;
   }
 
-  openComponent(component: any, title: string): void {
+  openComponent(component: any, title: string, payload?: any): void {
     this.openedWindows = [...this.openedWindows, {
       component,
       zIndex: this.lastZIndex + 1,
@@ -64,7 +78,7 @@ export class AppComponent implements AfterViewInit {
     }];
     this.lastZIndex += 1;
     this.lastWindowOpened = this.openedWindows.length - 1;
-    this.loadWindowContentWithDelay(this.openedWindows.length - 1, component);
+    this.loadWindowContentWithDelay(this.openedWindows.length - 1, component, payload);
   }
 
   closeWindow(index: number): void {
@@ -77,23 +91,30 @@ export class AppComponent implements AfterViewInit {
     this.lastWindowOpened = index;
   }
 
-  private loadWindowContentWithDelay(index: number, component: any): void {
+  private loadWindowContentWithDelay(index: number, component: any, payload?: any): void {
     setTimeout(() => {
-      this.loadWindowContent(index, component);
+      this.loadWindowContent(index, component, payload);
     }, 20);
   }
 
-  private loadWindowContent(index: number, component: any): void {
+  private loadWindowContent(index: number, component: any, payload?: any): void {
     const target = this.windowTargets.toArray()[index];
     const ref = target.createComponent(component);
     ref.changeDetectorRef.detectChanges();
 
+    // Set screen name if we are trying to chat, and we have a name in mind
+    if (component === ChatComponent) {
+      (ref.instance as ChatComponent).buddy = payload;
+    }
+    
+    this.focusWindow(index);
+
+    // TODO Need to handle positioning - maybe containerElement's first child?
     let containerElement = ref.location.nativeElement.parentElement;
     while (containerElement && !containerElement.classList.contains('window-element')) {
       containerElement = containerElement.parentElement;
     }
 
-    // TODO Consider a media query or simple window width check to handle different devices
     if (containerElement) {
       containerElement.style.position = 'absolute';
       containerElement.style.left = '10px';

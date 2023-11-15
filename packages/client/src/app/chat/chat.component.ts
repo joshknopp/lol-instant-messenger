@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, Render
 import { ChatService } from '../chat.service';
 import { take } from 'rxjs';
 import { AudioService } from '../audio.service';
+import { Character } from '../../../../shared/model/character';
 
 interface ChatMessage {
   author: 'assistant' | 'user',
@@ -22,6 +23,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   userMessage = '';
   messages: ChatMessage[] = [];
   conversationId?: string;
+  buddy?: Character;
 
   constructor(
     private chatService: ChatService,
@@ -32,6 +34,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.audioService.doorOpen();
+    setTimeout(() => {
+      console.log(`ngOnInit`, this.buddy)
+    }, 0);
+    
   }
 
   ngOnDestroy(): void {
@@ -62,7 +68,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       try {
         const userMessage: string = this.userMessage;
         this.userMessage = '';
-        const response = await this.chatService.sendMessageToApi(userMessage, this.conversationId);
+        const response = await this.chatService.sendMessageToApi(userMessage, this.conversationId, this.buddy);
         if (response) {
           this.conversationId = response.conversationId;
           this.messages.push(this.buildAssistantMessage(response.message, response.screenName));

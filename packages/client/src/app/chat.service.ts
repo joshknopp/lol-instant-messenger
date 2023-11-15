@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { Character } from '../../../shared/model/character';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,23 @@ export class ChatService {
     }
   }
 
-  async sendMessageToApi(message: string, conversationId?: string) {
-      const payload = {message, conversationId};
+  async sendMessageToApi(message: string, conversationId?: string, buddy?: Character) {
+      const payload = { message, conversationId, buddy };
       const payloadString = JSON.stringify(payload);
       const response = await firstValueFrom(this.http.post<{ conversationId: string, message: string, screenName: string }>(`${environment.apiUrl}/chat`, payloadString));
       return response;
+  }
+  
+  // TODO Break out to standalone character service
+  async getRandomCharacters(count: number) {
+    const response = await firstValueFrom(this.http.get<Character[]>(`${environment.apiUrl}/character/random/${count}`));
+    return response;
+}
+
+  async getCharacter(searchQuery: string) {
+    const payload = { searchQuery };
+    const payloadString = JSON.stringify(payload);
+    const response = await firstValueFrom(this.http.post<{ result: Character }>(`${environment.apiUrl}/chat`, payloadString));
+    return response;
   }
 }
