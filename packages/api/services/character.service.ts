@@ -1,6 +1,6 @@
 import { Character } from '../../shared/model/character';
 import { OpenAiService } from './openai.service';
-import { exampleCharacters } from '../../shared/data/character-data';
+import { exampleCharacters } from '../data/character-data';
 
 const openAiService: OpenAiService = new OpenAiService();
 

@@ -1,4 +1,4 @@
-import { Character } from "../model/character";
+import { Character } from "../../shared/model/character";
 
 export const exampleCharacters: Character[] = [
     {
