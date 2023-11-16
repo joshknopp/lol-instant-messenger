@@ -9,8 +9,11 @@ import { WindowsService } from '../windows.service';
   styleUrls: ['./buddy-list.component.scss']
 })
 export class BuddyListComponent implements OnInit {
+
   buddies!: Character[];
   selectedTab: 'online' | 'search' = 'online';
+  searchResult?: Character;
+  searchQuery!: string;
 
   constructor(private characterService: ChatService, private windowService: WindowsService) { }
 
@@ -34,7 +37,15 @@ export class BuddyListComponent implements OnInit {
     return tab === this.selectedTab;
   }
 
-  startChat(buddy: Character): void {
-    this.windowService.startChat(buddy);
+  startChat(buddy: Character | undefined): void {
+    if(buddy) this.windowService.startChat(buddy);
+  }
+
+  async searchForBuddy(searchQuery: string) {
+    console.log(searchQuery)
+    if(searchQuery) {
+      this.searchResult = (await this.characterService.getCharacter(searchQuery));
+      console.log(this.searchResult)
+    }
   }
 }

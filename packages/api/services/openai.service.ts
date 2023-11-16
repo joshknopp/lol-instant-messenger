@@ -19,11 +19,10 @@ export class OpenAiService {
     const openai: OpenAI = await this.getClient();
     const chatCompletion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      temperature: 1.5,
+      temperature: 1,
       messages: conversation,
     });
     return chatCompletion.choices[0].message.content;
   }
 
 }
-  

@@ -30,7 +30,15 @@
                             </div>
                         </div>
                         <div class="tab-pane" [class.active]="isTabSelected('search')" [class.show]="isTabSelected('search')" id="search" role="tabpanel" aria-labelledby="search-tab">
-                            Coming Soon!
+                            <div class="form-group">
+                                <label for="searchQuery" class="mb-2">Search</label>
+                                <input id="searchQuery" type="searchQuery" class="form-control" placeholder="Search for buddy" required [(ngModel)]="searchQuery" (keyup.enter)="searchForBuddy(searchQuery)" />
+                                <button type="submit" class="btn btn-block btn-primary" (click)="searchForBuddy(searchQuery)">Search</button>
+                            </div>
+                            <div *ngIf="searchResult !== undefined">
+                                <hr />
+                                <a class="username" (click)="startChat(searchResult)">{{ searchResult.screenName }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>

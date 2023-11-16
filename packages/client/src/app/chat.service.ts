@@ -30,12 +30,12 @@ export class ChatService {
   async getRandomCharacters(count: number) {
     const response = await firstValueFrom(this.http.get<Character[]>(`${environment.apiUrl}/character/random/${count}`));
     return response;
-}
+  }
 
   async getCharacter(searchQuery: string) {
     const payload = { searchQuery };
     const payloadString = JSON.stringify(payload);
-    const response = await firstValueFrom(this.http.post<{ result: Character }>(`${environment.apiUrl}/chat`, payloadString));
+    const response = await firstValueFrom(this.http.post<Character>(`${environment.apiUrl}/character`, payloadString));
     return response;
   }
 }
