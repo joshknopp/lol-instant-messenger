@@ -17,10 +17,6 @@ export class AppComponent implements AfterViewInit {
       goTo: BuddyListComponent,
     },
     {
-      name: '💬 LOL IM Chat',
-      goTo: ChatComponent,
-    },
-    {
       name: '🔗 Github',
       goTo: 'https://github.com/joshknopp/lol-instant-messenger',
     }
