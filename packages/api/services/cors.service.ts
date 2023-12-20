@@ -3,7 +3,7 @@ export class CorsService {
         const cors = (ctx, next) => {
             const { headers } = ctx.req;
             
-            const isLocalMode: boolean = (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined);
+            const isLocalMode: boolean = false;
 
             if(isLocalMode) {
               ctx.res.headers['Access-Control-Allow-Origin'] = [
