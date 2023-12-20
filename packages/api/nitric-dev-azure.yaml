@@ -1,0 +1,5 @@
+name: dev-azure
+provider: nitric/azure@0.32.0
+adminemail: microsoft@joshknopp.com
+org: joshknopp.com
+region: eastus
