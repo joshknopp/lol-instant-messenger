@@ -2,7 +2,7 @@
     <div #chatHistory class="chat-history">
         <div class="message" [ngClass]="message.author" *ngFor="let message of messages">
             <span class="username" [ngClass]="message.author">{{ getUserName(message) + ': ' }}</span>
-            <span class="body">{{ message.body }}</span>
+            <span class="body" [class.away] = "message.isAway">{{ message.body }}</span>
         </div>
     </div>
     <input #messageInput [(ngModel)]="userMessage" class="message-input" placeholder="Type your message..." (keydown.enter)="sendMessage()" />

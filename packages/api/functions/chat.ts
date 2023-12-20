@@ -1,6 +1,7 @@
 import { api, secret } from '@nitric/sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { Character } from '../../shared/model/character';
+import { BuddyMessage } from '../../shared/model/buddy-message';
 import { CharacterService } from '../services/character.service';
 import { CorsService } from '../services/cors.service';
 import { OpenAiService } from '../services/openai.service';
@@ -58,25 +59,29 @@ chatApi.post('/chat', async (ctx) => {
     conversations.set(conversationId, { character, messages: [{ role: 'system', content: characterInstruction }] });
   }
 
-  // TODO Think about how to handle service restarts, since convo only lives in memory - currently fails back to vanilla OpenAI which is no good
   let conversation: Conversation = conversations.get(conversationId);
   let conversationHistory = conversation?.messages || [];
   conversationHistory.push({ role: 'user', content: userMessage });
 
-  let buddyResponse: string;
+  let buddyMessage: BuddyMessage = { conversationId, screenName: conversation?.character?.screenName } as BuddyMessage;
+  let status: number = 200;
 
   try {
     const openAIResponse: string = await openAiService.sendRequestToOpenAI(conversationHistory);
     conversationHistory.push({ role: 'assistant', content: openAIResponse });
-    conversations.get(conversationId).messages = conversationHistory;
-    buddyResponse = openAIResponse;
+    // TODO How to handle service restarts? Convo will be gone from memory; currently returns 503, but only AFTER hitting OpenAI
+  conversations.get(conversationId).messages = conversationHistory;
+    buddyMessage.message = openAIResponse;
   } catch(err: any) {
-    buddyResponse = `(Away Message) ${conversation.character.awayMessage}`;
+    buddyMessage.message = conversation?.character?.awayMessage;
+    buddyMessage.isAway = true;
+    console.error(err);
+    status = 503;
   }
 
   // TODO if an error causes away message to return, probably should not be status 200
-  ctx.res.status = 200;
-  ctx.res.json({ conversationId, message: buddyResponse, screenName: conversation.character.screenName });
+  ctx.res.status = status;
+  ctx.res.json(buddyMessage);
 });
 
 chatApi.post('/character', async (ctx) => {

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { Character } from '../../../shared/model/character';
+import { BuddyMessage } from '../../../shared/model/buddy-message';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class ChatService {
     }
   }
 
-  async sendMessageToApi(message: string, conversationId?: string, buddy?: Character) {
+  async sendMessageToApi(message: string, conversationId?: string, buddy?: Character): Promise<BuddyMessage> {
       const payload = { message, conversationId, buddy };
       const payloadString = JSON.stringify(payload);
       const response = await firstValueFrom(this.http.post<{ conversationId: string, message: string, screenName: string }>(`${environment.apiUrl}/chat`, payloadString));

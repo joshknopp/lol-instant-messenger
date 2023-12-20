@@ -1,14 +1,16 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ChatService } from '../chat.service';
 import { take } from 'rxjs';
-import { AudioService } from '../audio.service';
 import { Character } from '../../../../shared/model/character';
+import { AudioService } from '../audio.service';
+import { ChatService } from '../chat.service';
 
 interface ChatMessage {
   author: 'assistant' | 'user',
   screenName?: string,
   body: string,
-  timestamp: Date
+  timestamp: Date,
+  isAway?: boolean
 }
 
 @Component({
@@ -51,8 +53,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private buildAssistantMessage(message: string, screenName?: string) {
-    return { author: 'assistant', screenName, body: message, timestamp: new Date() } as ChatMessage;
+  private buildAssistantMessage(message: string, screenName?: string, isAway?: boolean) {
+    return { author: 'assistant', screenName, body: message, timestamp: new Date(), isAway } as ChatMessage;
   }
 
   private buildUserMessage(message: string) {
@@ -74,8 +76,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
           this.messages.push(this.buildAssistantMessage(response.message, response.screenName));
         }
       } catch (error) {
-        console.error('API error occurred on sendMessage:', error);
-        this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`, 'Buddy'));
+        if (error instanceof HttpErrorResponse && error.status === 503) {
+          this.messages.push(this.buildAssistantMessage(error.error.message || this.buddy?.awayMessage, error.error.screenName || this.buddy?.screenName, true));
+        } else {
+          console.error('API error occurred on sendMessage:', error);
+          this.messages.push(this.buildAssistantMessage(`Oops! Something went wrong. Sorry about that!`, 'Buddy'));
+        }
       } finally {
         this.audioService.receive();
         // Wait for the view to update and then scroll to the bottom
