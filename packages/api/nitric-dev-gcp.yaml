@@ -1,0 +1,4 @@
+name: dev-gcp
+provider: nitric/gcp@0.35.0
+gcp-project-id: lol-instant-messenger-1
+region: us-east1
