@@ -34,3 +34,11 @@ npm install
 # run locally
 npm run dev
 ```
+
+## Deploying to non-local environment
+
+Unless you really enjoy troubleshooting CORS issues, be sure to add a file in /api root called `.env.production` with (at minimum) a key name `ALLOWED_DOMAINS` with a value corresponding to the intended client's domain(s). Note that the value can be a comma-delimited list if you need to support multiple clients. For example:
+
+```
+ALLOWED_DOMAINS="joshknopp.com"
+```
