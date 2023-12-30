@@ -28,7 +28,7 @@ export class ChatService {
   }
   
   // TODO Break out to standalone character service
-  async getRandomCharacters(count: number) {
+  async getRandomCharacters(count: number): Promise<Character[]> {
     const response = await firstValueFrom(this.http.get<Character[]>(`${environment.apiUrl}/character/random/${count}`));
     return response;
   }

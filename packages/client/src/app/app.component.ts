@@ -50,7 +50,7 @@ export class AppComponent implements AfterViewInit {
     this.windowsService.startedChatEvent
       .subscribe((buddy: Character) => {
         this.openMenuItem( {
-          name: '💬 LOL IM Chat',
+          name: '💬 ' + buddy.screenName + ' - Instant Message',
           goTo: ChatComponent,
           payload: buddy
         });
