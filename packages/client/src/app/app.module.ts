@@ -8,13 +8,15 @@ import { ChatComponent } from './chat/chat.component';
 import { DraggableDirective } from './draggable.directive';
 import { WindowsService } from './windows.service';
 import { BuddyListComponent } from './buddy-list/buddy-list.component';
+import { ClockComponent } from './clock/clock.component';
 
 @NgModule({
   declarations: [
     AppComponent, 
     DraggableDirective,
     ChatComponent,
-    BuddyListComponent],
+    BuddyListComponent,
+    ClockComponent],
   imports: [BrowserModule, FormsModule, HttpClientModule],
   providers: [
     WindowsService
