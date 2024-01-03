@@ -1,9 +1,9 @@
 <div class="buddy-list-window">
     <!-- https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_dropdown_navbar_click -->
     <!-- http://www.tech2u.com.au/training/tech2u/win95_1/computer.html -->
-    <div class="navbar">
+    <!--<div class="navbar">
         Options
-    </div>
+    </div>-->
     <div class="logo">
         <img class="logo-image" src="assets/images/logo.svg" alt="LOL Instant Messenger Logo" />
     </div>
@@ -20,6 +20,10 @@
                         <li class="nav-item">
                             <a class="nav-link" [class.active]="isTabSelected('search')" id="search-tab" data-bs-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false"
                                 (click)="handleSearchTabClick()">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="isTabSelected('settings')" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false"
+                                (click)="handleSettingsTabClick()">Settings</a>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -43,6 +47,19 @@
                             <div *ngIf="searchResult !== undefined">
                                 <hr />
                                 <a class="username" (click)="startChat(searchResult)">{{ searchResult.screenName }}</a>
+                            </div>
+                        </div>
+                        <div class="tab-pane" [class.active]="isTabSelected('settings')" [class.show]="isTabSelected('settings')" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                            <div class="form-check" *ngFor="let provider of providers">
+                                <input
+                                  type="radio"
+                                  class="form-check-input"
+                                  [id]="provider.name"
+                                  [value]="provider.url"
+                                  [checked]="selectedProviderName === provider.name"
+                                  (change)="handleProviderChange(provider.name)"
+                                />
+                                <label class="form-check-label" [for]="provider.name">{{ provider.name }}</label>
                             </div>
                         </div>
                     </div>

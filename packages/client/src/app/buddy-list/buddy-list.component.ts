@@ -1,7 +1,8 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { Component, OnInit } from '@angular/core';
 import { Character } from '../../../../shared/model/character';
+import { ChatService } from '../chat.service';
 import { WindowsService } from '../windows.service';
+import { EnvironmentService } from '../environment.service';
 
 @Component({
   selector: 'app-buddy-list',
@@ -9,16 +10,19 @@ import { WindowsService } from '../windows.service';
   styleUrls: ['./buddy-list.component.scss']
 })
 export class BuddyListComponent implements OnInit {
-
   buddies!: Character[];
-  selectedTab: 'online' | 'search' = 'online';
+  selectedTab: 'online' | 'search' | 'settings' = 'online';
   searchResult?: Character;
   searchQuery!: string;
+  providers?: { name: string, url: string }[];
+  selectedProviderName?: string;
 
-  constructor(private characterService: ChatService, private windowService: WindowsService) { }
+  constructor(private characterService: ChatService, private windowService: WindowsService, private environmentService: EnvironmentService) { }
 
   async ngOnInit(): Promise<void> {
     this.getRandomBuddies();
+    this.providers = this.environmentService.getProviders();
+    this.selectedProviderName = this.environmentService.getSelectedProviderName();
   }
 
   async getRandomBuddies(): Promise<void> {
@@ -33,7 +37,11 @@ export class BuddyListComponent implements OnInit {
     this.selectedTab = 'search';
   }
 
-  isTabSelected(tab: 'online' | 'search') {
+  handleSettingsTabClick() {
+    this.selectedTab = 'settings';
+  }
+
+  isTabSelected(tab: 'online' | 'search' | 'settings') {
     return tab === this.selectedTab;
   }
 
@@ -47,5 +55,10 @@ export class BuddyListComponent implements OnInit {
       this.searchResult = (await this.characterService.getCharacter(searchQuery));
       console.log(this.searchResult)
     }
+  }
+  
+  handleProviderChange(providerName: string) {
+    this.environmentService.setSelectedProvider(providerName);
+    this.selectedProviderName = providerName;
   }
 }
