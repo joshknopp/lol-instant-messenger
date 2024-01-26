@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4001'
+  awsApiUrl: 'http://localhost:4001',
+  azureApiUrl: 'http://localhost:4001',
+  gcpApiUrl: 'http://localhost:4001'
 };
 
 /*
