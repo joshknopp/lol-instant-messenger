@@ -1,3 +1,0 @@
-name: dev
-provider: nitric/aws@0.32.0
-region: us-east-1
